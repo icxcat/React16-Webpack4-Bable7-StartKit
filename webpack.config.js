@@ -1,56 +1,71 @@
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const webpack = require("webpack");
-const path = require("path");
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('path');
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   context: __dirname,
-  entry: "./src/index.js",
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "main.js",
-    publicPath: "/"
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'main.js',
+    publicPath: '/',
   },
   devServer: {
     port: 7725,
     open: true,
-    contentBase: path.join(__dirname, "../src"),
+    contentBase: path.join(__dirname, 'public'),
     historyApiFallback: true,
-    hot: true
   },
   module: {
     rules: [
       {
         test: /\.js?$/,
         exclude: /node_module/,
-        use: "babel-loader"
+        use: 'babel-loader',
       },
       {
         test: /\.css?$/,
-        use: ["style-loader", "css-loader"]
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(png|j?g|svg|gif)?$/,
-        use: "file-loader"
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 5000,
+              name: '[name].[hash:8].[ext]',
+              outputPath: 'static/img/',
+            },
+          },
+        ],
       },
       {
         test: /\.(eot|woff|woff2|ttf)$/,
-        use: "url-loader"
-      }
-    ]
+        use: 'url-loader',
+      },
+      {
+        test: /\.json$/,
+        loader: 'json-loader',
+      },
+    ],
   },
   plugins: [
+    new ManifestPlugin(),
     new HtmlWebPackPlugin({
-      template: path.resolve(__dirname, "public/index.html"),
-      filename: "index.html",
+      template: path.resolve(__dirname, 'public/index.html'),
+      filename: 'index.html',
+      favicon: path.resolve(__dirname, 'public/favicon.ico'),
       minify: !isDevelopment && {
         html5: true,
         collapseWhitespace: true,
         caseSensitive: true,
-        removeComments: true
-      }
+        removeComments: true,
+      },
     }),
-    new webpack.HotModuleReplacementPlugin()
-  ]
+    new CleanWebpackPlugin(),
+  ],
 };
