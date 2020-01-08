@@ -16,8 +16,9 @@ module.exports = {
   devServer: {
     port: 7725,
     open: true,
-    contentBase: path.join(__dirname, 'public'),
+    contentBase: path.join(__dirname, 'src'),
     historyApiFallback: true,
+    hot: true,
   },
   module: {
     rules: [
@@ -31,7 +32,7 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(png|j?g|svg|gif)?$/,
+        test: /\.(png|jp?g|svg|gif)?$/,
         use: [
           {
             loader: 'url-loader',
@@ -56,9 +57,9 @@ module.exports = {
   plugins: [
     new ManifestPlugin(),
     new HtmlWebPackPlugin({
-      template: path.resolve(__dirname, 'public/index.html'),
+      template: path.resolve(__dirname, 'src/index.html'),
       filename: 'index.html',
-      favicon: path.resolve(__dirname, 'public/favicon.ico'),
+      favicon: path.resolve(__dirname, 'src/assets/favicon.ico'),
       minify: !isDevelopment && {
         html5: true,
         collapseWhitespace: true,
